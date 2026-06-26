@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { HeroScene } from "./HeroScene";
+import { HeroJewelry } from "./HeroJewelry";
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -115,9 +115,8 @@ export function Hero() {
           transition={{ duration: 1.4, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="relative aspect-square w-full"
         >
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[oklch(0.92_0.06_75)] via-transparent to-[oklch(0.85_0.07_45)] opacity-70 blur-3xl" />
           <div className="relative h-full w-full">
-            <HeroScene />
+            <HeroJewelry />
           </div>
         </motion.div>
       </motion.div>
