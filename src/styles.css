@@ -203,3 +203,23 @@
     transform-origin: left;
   }
 }
+
+@utility lux-input {
+  width: 100%;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+@utility lux-input {
+  &:focus { border-color: var(--color-gold); }
+}
+@utility lux-input {
+  &.resize-none {
+    border-radius: 1.25rem;
+  }
+}

@@ -1,57 +1,68 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MessageCircle } from "lucide-react";
-import p1 from "@/assets/product-1.jpg";
-import p2 from "@/assets/product-2.jpg";
-import p3 from "@/assets/product-3.jpg";
-import p4 from "@/assets/product-4.jpg";
-import p5 from "@/assets/product-5.jpg";
-import p6 from "@/assets/product-6.jpg";
-import p7 from "@/assets/product-7.jpg";
-import p8 from "@/assets/product-8.jpg";
-import p9 from "@/assets/product-9.jpg";
-import p10 from "@/assets/product-10.jpg";
-import p11 from "@/assets/product-11.jpg";
-import p12 from "@/assets/product-12.jpg";
+import { useQuery } from "@tanstack/react-query";
+import { X, MessageCircle, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { formatRupees } from "@/lib/format";
 
 type Product = {
-  id: number;
+  id: string;
   name: string;
   category: string;
-  price: string;
-  image: string;
+  price_inr: number;
+  description: string;
   materials: string;
   colors: string[];
-  description: string;
+  image_url: string;
+  hidden: boolean;
+  inventory: number;
+  sort_order: number;
 };
 
-const products: Product[] = [
-  { id: 1, name: "Aurore Solitaire", category: "Rings", price: "$2,480", image: p1, materials: "18k yellow gold · 1.2ct diamond", colors: ["Champagne Gold", "Rose Gold"], description: "A timeless solitaire, hand-set in heirloom gold — designed to be worn every day, treasured for a lifetime." },
-  { id: 2, name: "Lumière Layered Chain", category: "Necklaces", price: "$890", image: p2, materials: "14k gold-filled, hand-linked", colors: ["Champagne Gold"], description: "A trio of weightless chains that catch the light with every movement." },
-  { id: 3, name: "Pearl Étoile Drops", category: "Earrings", price: "$420", image: p3, materials: "Freshwater pearls · 14k gold", colors: ["Ivory", "Champagne"], description: "Sculptural pearl drops that frame the face with quiet sophistication." },
-  { id: 4, name: "Éternité Tennis", category: "Bracelets", price: "$1,650", image: p4, materials: "Rose gold · pavé diamonds", colors: ["Rose Gold"], description: "A continuous line of pavé stones — an heirloom in the making." },
-  { id: 5, name: "Émeraude Pendant", category: "Necklaces", price: "$1,980", image: p5, materials: "18k gold · 0.8ct emerald", colors: ["Champagne Gold"], description: "A single emerald, suspended on a whisper of gold." },
-  { id: 6, name: "Trio Stack", category: "Rings", price: "$680", image: p6, materials: "14k gold · micro pavé", colors: ["Champagne Gold", "Rose Gold"], description: "Three delicate bands designed to be worn together or apart." },
-  { id: 7, name: "Saphir Royale", category: "Rings", price: "$3,200", image: p7, materials: "18k gold · 1.5ct sapphire", colors: ["Champagne Gold"], description: "A statement sapphire, set in our signature heritage mount." },
-  { id: 8, name: "Halo Hoops", category: "Earrings", price: "$760", image: p8, materials: "14k gold · diamond pavé", colors: ["Champagne Gold"], description: "Architectural hoops with a halo of light at every angle." },
-  { id: 9, name: "Signature Cuff", category: "Bracelets", price: "$1,120", image: p9, materials: "18k gold · hand-engraved", colors: ["Champagne Gold"], description: "A sculptural cuff, finished with our atelier's signature engraving." },
-  { id: 10, name: "Maison Solitaire", category: "Rings", price: "$4,500", image: p10, materials: "Rose gold · 2ct brilliant", colors: ["Rose Gold"], description: "The Maison Solitaire — our most exacting expression of light." },
-  { id: 11, name: "Rubis Drop", category: "Necklaces", price: "$1,420", image: p11, materials: "18k gold · 1ct ruby", colors: ["Champagne Gold"], description: "A pear-cut ruby suspended on a delicate cable chain." },
-  { id: 12, name: "Étoile Anklet", category: "Bracelets", price: "$340", image: p12, materials: "Rose gold-fill · star charms", colors: ["Rose Gold"], description: "A whisper of stars to wear at the ankle — summer, made permanent." },
-];
+async function fetchProducts(): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("hidden", false)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as Product[];
+}
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 60 },
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.9, delay: (i % 4) * 0.08, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
-
 export function Products() {
   const [active, setActive] = useState<Product | null>(null);
+  const [filter, setFilter] = useState<string>("All");
+
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ["products", "public"],
+    queryFn: fetchProducts,
+  });
+
+  const categories = useMemo(() => {
+    const set = new Set(products.map((p) => p.category));
+    return ["All", ...Array.from(set)];
+  }, [products]);
+
+  const visible = useMemo(
+    () => (filter === "All" ? products : products.filter((p) => p.category === filter)),
+    [products, filter],
+  );
+
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setActive(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [active]);
 
   return (
     <section id="products" className="relative bg-background py-28 md:py-40">
@@ -61,54 +72,95 @@ export function Products() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-20 text-center"
+          className="mb-12 text-center"
         >
-          <p className="mb-4 text-[11px] uppercase tracking-luxe text-gold">The Collection</p>
+          <p className="mb-4 inline-flex items-center gap-2 text-[11px] uppercase tracking-luxe text-gold">
+            <Sparkles className="h-3 w-3" /> The Collection
+          </p>
           <h2 className="font-display text-4xl text-ink md:text-5xl">
             Composed with Intention
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-ink-soft md:text-[17px]">
-            Twelve pieces, each made by hand in our atelier — designed to be
-            inherited, not replaced.
+            Pieces made by hand in our atelier — designed to be inherited, not replaced.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((p, i) => (
-            <motion.button
-              key={p.id}
-              custom={i}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-50px" }}
-              onClick={() => setActive(p)}
-              className="group text-left"
+        {/* Category filter */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-16 flex flex-wrap items-center justify-center gap-2"
+        >
+          {categories.map((c) => (
+            <button
+              key={c}
+              onClick={() => setFilter(c)}
+              className={`relative rounded-full border px-5 py-2 text-[11px] uppercase tracking-luxe transition-all ${
+                filter === c
+                  ? "border-gold bg-gold/10 text-ink shadow-glow"
+                  : "border-ink/15 text-ink-soft hover:border-gold/50 hover:text-ink"
+              }`}
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-surface shadow-soft transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-glow">
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  loading="lazy"
-                  width={1024}
-                  height={1024}
-                  className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <div className="absolute inset-x-0 bottom-0 translate-y-4 p-5 text-background opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                  <span className="text-[10px] uppercase tracking-luxe">View piece →</span>
-                </div>
-              </div>
-              <div className="mt-5 flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[10px] uppercase tracking-luxe text-ink-soft">{p.category}</p>
-                  <h3 className="mt-1 font-display text-xl text-ink">{p.name}</h3>
-                </div>
-                <p className="mt-1 font-sans text-[13px] text-gold">{p.price}</p>
-              </div>
-            </motion.button>
+              {c}
+            </button>
           ))}
-        </div>
+        </motion.div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] animate-pulse rounded-2xl bg-surface" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <AnimatePresence mode="popLayout">
+              {visible.map((p, i) => (
+                <motion.button
+                  key={p.id}
+                  layout
+                  custom={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  onClick={() => setActive(p)}
+                  className="group text-left"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-surface shadow-soft transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-glow">
+                    <img
+                      src={p.image_url}
+                      alt={p.name}
+                      loading="lazy"
+                      width={1024}
+                      height={1024}
+                      className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    <div className="absolute inset-x-0 bottom-0 translate-y-4 p-5 text-background opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                      <span className="text-[10px] uppercase tracking-luxe">View piece →</span>
+                    </div>
+                    {p.inventory <= 0 && (
+                      <span className="absolute left-3 top-3 rounded-full bg-ink/80 px-3 py-1 text-[9px] uppercase tracking-luxe text-background">
+                        Sold out
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-5 flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-luxe text-ink-soft">{p.category}</p>
+                      <h3 className="mt-1 font-display text-xl text-ink">{p.name}</h3>
+                    </div>
+                    <p className="mt-1 font-sans text-[13px] text-gold">{formatRupees(p.price_inr)}</p>
+                  </div>
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
 
       <AnimatePresence>
@@ -118,7 +170,7 @@ export function Products() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 p-4 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/50 p-4 backdrop-blur-md"
             onClick={() => setActive(null)}
           >
             <motion.div
@@ -138,7 +190,7 @@ export function Products() {
               </button>
               <div className="aspect-square overflow-hidden bg-surface md:aspect-auto">
                 <img
-                  src={active.image}
+                  src={active.image_url}
                   alt={active.name}
                   width={1024}
                   height={1024}
@@ -146,29 +198,31 @@ export function Products() {
                 />
               </div>
               <div className="flex flex-col gap-5 overflow-y-auto p-8 md:p-12">
-                <p className="text-[10px] uppercase tracking-luxe text-gold">
-                  {active.category}
-                </p>
+                <p className="text-[10px] uppercase tracking-luxe text-gold">{active.category}</p>
                 <h3 className="font-display text-3xl text-ink md:text-4xl">{active.name}</h3>
-                <p className="font-display text-2xl text-gradient-gold">{active.price}</p>
+                <p className="font-display text-2xl text-gradient-gold">{formatRupees(active.price_inr)}</p>
                 <p className="text-[15px] leading-relaxed text-ink-soft">{active.description}</p>
-                <div className="border-t border-border pt-5">
-                  <p className="text-[10px] uppercase tracking-luxe text-ink-soft">Materials</p>
-                  <p className="mt-2 text-sm text-ink">{active.materials}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-luxe text-ink-soft">Available in</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {active.colors.map((c) => (
-                      <span
-                        key={c}
-                        className="rounded-full border border-gold/40 px-3 py-1 text-[11px] uppercase tracking-luxe text-ink"
-                      >
-                        {c}
-                      </span>
-                    ))}
+                {active.materials && (
+                  <div className="border-t border-border pt-5">
+                    <p className="text-[10px] uppercase tracking-luxe text-ink-soft">Materials</p>
+                    <p className="mt-2 text-sm text-ink">{active.materials}</p>
                   </div>
-                </div>
+                )}
+                {active.colors.length > 0 && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-luxe text-ink-soft">Available in</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {active.colors.map((c) => (
+                        <span
+                          key={c}
+                          className="rounded-full border border-gold/40 px-3 py-1 text-[11px] uppercase tracking-luxe text-ink"
+                        >
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <a
                   href={`https://wa.me/0000000000?text=I%27d%20like%20to%20order%20the%20${encodeURIComponent(active.name)}`}
                   target="_blank"
