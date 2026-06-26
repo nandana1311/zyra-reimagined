@@ -110,14 +110,12 @@ export function Hero() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
+          initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.4, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="relative aspect-square w-full"
         >
-          <div className="relative h-full w-full">
-            <HeroJewelry />
-          </div>
+          <HeroJewelry />
         </motion.div>
       </motion.div>
 

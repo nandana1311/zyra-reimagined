@@ -1,77 +1,78 @@
 import { motion } from "framer-motion";
+import portrait from "@/assets/anna-portrait.png";
+import logo from "@/assets/zyra-logo.png";
 import bangle1 from "@/assets/floating-bangle-1.png";
 import bangle2 from "@/assets/floating-bangle-2.png";
 import bangle3 from "@/assets/floating-bangle-3.png";
 import ring1 from "@/assets/floating-ring-1.png";
 import ring2 from "@/assets/floating-ring-2.png";
+import earring from "@/assets/floating-earring-1.png";
+import gem from "@/assets/floating-gem-1.png";
 
 type Piece = {
   src: string;
   alt: string;
-  // Position as percent
   top: string;
   left: string;
-  size: string; // e.g. "44%"
-  rotate: number;
+  size: string;
   duration: number;
   floatY: number;
-  flip?: boolean;
+  tilt: number;
+  rotate?: number;
   delay?: number;
   z?: number;
+  opacity?: number;
 };
 
 const pieces: Piece[] = [
-  { src: bangle1, alt: "Polished gold bangle", top: "8%",  left: "18%", size: "62%", rotate: 360, duration: 38, floatY: 18, delay: 0, z: 2 },
-  { src: bangle2, alt: "Hammered gold bangle", top: "46%", left: "8%",  size: "54%", rotate: -360, duration: 46, floatY: 22, flip: true, delay: 0.6, z: 1 },
-  { src: bangle3, alt: "Twisted gold bangle", top: "55%", left: "44%", size: "58%", rotate: 360, duration: 52, floatY: 16, delay: 1.2, z: 3 },
-  { src: ring1,   alt: "Gold solitaire ring", top: "6%",  left: "52%", size: "34%", rotate: -360, duration: 30, floatY: 24, flip: true, delay: 0.3, z: 4 },
-  { src: ring2,   alt: "Rose gold eternity rings", top: "32%", left: "58%", size: "32%", rotate: 360, duration: 34, floatY: 20, delay: 0.9, z: 4 },
+  { src: bangle1, alt: "Gold bangle", top: "2%",  left: "8%",  size: "26%", duration: 9,  floatY: 18, tilt: 8,  rotate: 360, delay: 0,   z: 2 },
+  { src: ring1,   alt: "Gold ring",   top: "12%", left: "78%", size: "16%", duration: 7,  floatY: 22, tilt: 12, delay: 0.4, z: 3 },
+  { src: bangle2, alt: "Gold bangle", top: "70%", left: "4%",  size: "22%", duration: 11, floatY: 16, tilt: -10, rotate: -360, delay: 0.8, z: 2 },
+  { src: earring, alt: "Gold earring", top: "58%", left: "82%", size: "18%", duration: 8, floatY: 24, tilt: 6, delay: 1.1, z: 3 },
+  { src: bangle3, alt: "Gold bangle", top: "82%", left: "60%", size: "20%", duration: 10, floatY: 14, tilt: 10, rotate: 360, delay: 0.6, z: 2 },
+  { src: gem,     alt: "Champagne gem", top: "44%", left: "92%", size: "10%", duration: 6, floatY: 18, tilt: 14, delay: 0.2, z: 4, opacity: 0.9 },
+  { src: ring2,   alt: "Rose gold rings", top: "88%", left: "20%", size: "16%", duration: 9, floatY: 20, tilt: -8, delay: 1.4, z: 3 },
 ];
 
 export function HeroJewelry() {
   return (
-    <div
-      className="relative h-full w-full overflow-hidden rounded-[2rem]"
-      style={{
-        background:
-          "radial-gradient(120% 80% at 60% 30%, #2a2522 0%, #181513 55%, #0b0908 100%)",
-      }}
-      aria-hidden={false}
-    >
-      {/* soft gold ambient glows */}
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className="absolute -top-24 -right-16 h-72 w-72 rounded-full opacity-40 blur-3xl"
-          style={{ background: "radial-gradient(circle, #d4af37 0%, transparent 70%)" }}
-        />
-        <div
-          className="absolute bottom-0 left-0 h-80 w-80 rounded-full opacity-30 blur-3xl"
-          style={{ background: "radial-gradient(circle, #cfa18d 0%, transparent 70%)" }}
-        />
-      </div>
+    <div className="relative h-full w-full">
+      {/* soft ambient glow */}
+      <div
+        className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 blur-3xl"
+        style={{ background: "radial-gradient(circle, rgba(212,175,55,0.18) 0%, transparent 70%)" }}
+      />
 
-      {/* sparkle particles */}
-      <div className="pointer-events-none absolute inset-0">
-        {Array.from({ length: 16 }).map((_, i) => (
-          <motion.span
-            key={i}
-            className="absolute h-[2px] w-[2px] rounded-full bg-[#f5e1a8]"
-            style={{
-              top: `${(i * 53) % 100}%`,
-              left: `${(i * 37) % 100}%`,
-            }}
-            animate={{ opacity: [0.15, 0.9, 0.15], scale: [1, 1.4, 1] }}
-            transition={{
-              duration: 3 + (i % 4),
-              repeat: Infinity,
-              delay: i * 0.25,
-              ease: "easeInOut",
-            }}
+      {/* center composition: logo above portrait */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <motion.img
+          src={logo}
+          alt="Zyra by Anna"
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10 mb-[-6%] h-auto w-[42%] max-w-[220px] select-none"
+          draggable={false}
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.4, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-[62%] max-w-[360px]"
+          style={{ filter: "drop-shadow(0 30px 40px rgba(60,40,20,0.18))" }}
+        >
+          <motion.img
+            src={portrait}
+            alt="Anna, founder of Zyra"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+            className="block h-auto w-full select-none"
+            draggable={false}
           />
-        ))}
+        </motion.div>
       </div>
 
-      {/* floating jewelry */}
+      {/* floating jewelry accents */}
       {pieces.map((p, i) => (
         <motion.div
           key={i}
@@ -81,19 +82,20 @@ export function HeroJewelry() {
             left: p.left,
             width: p.size,
             zIndex: p.z ?? 1,
-            filter: "drop-shadow(0 30px 35px rgba(0,0,0,0.55)) drop-shadow(0 0 25px rgba(212,175,55,0.25))",
+            opacity: p.opacity ?? 1,
+            filter: "drop-shadow(0 18px 22px rgba(80,60,30,0.18)) drop-shadow(0 0 18px rgba(212,175,55,0.18))",
           }}
-          initial={{ opacity: 0, y: 30, scale: 0.9 }}
+          initial={{ opacity: 0, y: 24, scale: 0.85 }}
           animate={{
-            opacity: 1,
+            opacity: p.opacity ?? 1,
             y: [0, -p.floatY, 0],
             scale: 1,
           }}
           transition={{
-            opacity: { duration: 1.2, delay: 0.3 + i * 0.15 },
-            scale: { duration: 1.2, delay: 0.3 + i * 0.15, ease: [0.22, 1, 0.36, 1] },
+            opacity: { duration: 1.2, delay: 0.5 + i * 0.12 },
+            scale: { duration: 1.2, delay: 0.5 + i * 0.12, ease: [0.22, 1, 0.36, 1] },
             y: {
-              duration: 6 + (i % 3),
+              duration: p.duration,
               repeat: Infinity,
               ease: "easeInOut",
               delay: p.delay,
@@ -103,31 +105,22 @@ export function HeroJewelry() {
           <motion.img
             src={p.src}
             alt={p.alt}
-            width={768}
-            height={768}
-            loading={i === 0 ? "eager" : "lazy"}
+            loading="lazy"
             className="block h-auto w-full select-none"
             draggable={false}
             animate={
-              p.flip
-                ? { rotateY: [0, 180, 360], rotateZ: [0, p.rotate / 6, 0] }
-                : { rotate: [0, p.rotate] }
+              p.rotate
+                ? { rotate: [0, p.rotate] }
+                : { rotate: [-p.tilt, p.tilt, -p.tilt] }
             }
             transition={
-              p.flip
-                ? {
-                    rotateY: { duration: p.duration, repeat: Infinity, ease: "linear" },
-                    rotateZ: { duration: p.duration / 2, repeat: Infinity, ease: "easeInOut" },
-                  }
-                : { duration: p.duration, repeat: Infinity, ease: "linear" }
+              p.rotate
+                ? { duration: p.duration * 4, repeat: Infinity, ease: "linear" }
+                : { duration: p.duration * 1.4, repeat: Infinity, ease: "easeInOut" }
             }
-            style={{ transformStyle: "preserve-3d", backfaceVisibility: "visible" as const }}
           />
         </motion.div>
       ))}
-
-      {/* fine gold frame */}
-      <div className="pointer-events-none absolute inset-3 rounded-[1.8rem] border border-[#d4af37]/15" />
     </div>
   );
 }
