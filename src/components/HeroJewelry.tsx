@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import portrait from "@/assets/anna-portrait.png";
-import logo from "@/assets/zyra-logo.png";
 import bangle1 from "@/assets/floating-bangle-1.png";
 import bangle2 from "@/assets/floating-bangle-2.png";
 import bangle3 from "@/assets/floating-bangle-3.png";
@@ -22,58 +21,35 @@ type Piece = {
   delay?: number;
   z?: number;
   opacity?: number;
+  scale?: number;
 };
 
-const pieces: Piece[] = [
-  { src: bangle1, alt: "Gold bangle", top: "2%",  left: "8%",  size: "26%", duration: 9,  floatY: 18, tilt: 8,  rotate: 360, delay: 0,   z: 2 },
-  { src: ring1,   alt: "Gold ring",   top: "12%", left: "78%", size: "16%", duration: 7,  floatY: 22, tilt: 12, delay: 0.4, z: 3 },
-  { src: bangle2, alt: "Gold bangle", top: "70%", left: "4%",  size: "22%", duration: 11, floatY: 16, tilt: -10, rotate: -360, delay: 0.8, z: 2 },
-  { src: earring, alt: "Gold earring", top: "58%", left: "82%", size: "18%", duration: 8, floatY: 24, tilt: 6, delay: 1.1, z: 3 },
-  { src: bangle3, alt: "Gold bangle", top: "82%", left: "60%", size: "20%", duration: 10, floatY: 14, tilt: 10, rotate: 360, delay: 0.6, z: 2 },
-  { src: gem,     alt: "Champagne gem", top: "44%", left: "92%", size: "10%", duration: 6, floatY: 18, tilt: 14, delay: 0.2, z: 4, opacity: 0.9 },
-  { src: ring2,   alt: "Rose gold rings", top: "88%", left: "20%", size: "16%", duration: 9, floatY: 20, tilt: -8, delay: 1.4, z: 3 },
+const backdropPieces: Piece[] = [
+  { src: bangle1, alt: "Gold bangle", top: "4%", left: "-4%", size: "32%", duration: 10, floatY: 20, tilt: 14, rotate: 360, delay: 0, z: 1, opacity: 0.55 },
+  { src: ring1, alt: "Gold ring", top: "2%", left: "68%", size: "24%", duration: 8, floatY: 18, tilt: 18, delay: 0.3, z: 2 },
+  { src: gem, alt: "Champagne gem", top: "18%", left: "42%", size: "14%", duration: 6, floatY: 14, tilt: 22, delay: 0.1, z: 1, opacity: 0.45 },
+  { src: earring, alt: "Gold earring", top: "8%", left: "88%", size: "22%", duration: 9, floatY: 22, tilt: -12, delay: 0.6, z: 3 },
+  { src: bangle2, alt: "Gold bangle", top: "52%", left: "-6%", size: "30%", duration: 11, floatY: 16, tilt: -16, rotate: -360, delay: 0.9, z: 1, opacity: 0.6 },
+  { src: ring2, alt: "Rose gold rings", top: "62%", left: "8%", size: "20%", duration: 8, floatY: 20, tilt: 10, delay: 1.2, z: 2, opacity: 0.7 },
+  { src: bangle3, alt: "Gold bangle", top: "72%", left: "78%", size: "28%", duration: 12, floatY: 18, tilt: 8, rotate: 360, delay: 0.5, z: 2 },
+  { src: ring1, alt: "Gold ring", top: "38%", left: "92%", size: "18%", duration: 7, floatY: 24, tilt: -20, delay: 1.5, z: 3, opacity: 0.85 },
+  { src: earring, alt: "Gold earring", top: "84%", left: "52%", size: "20%", duration: 9, floatY: 16, tilt: 14, delay: 0.8, z: 2, scale: 0.9 },
+  { src: gem, alt: "Champagne gem", top: "28%", left: "18%", size: "11%", duration: 5, floatY: 12, tilt: -18, delay: 0.4, z: 1, opacity: 0.5 },
+  { src: bangle1, alt: "Gold bangle", top: "46%", left: "58%", size: "26%", duration: 10, floatY: 14, tilt: -8, delay: 1.1, z: 1, opacity: 0.35 },
+  { src: ring2, alt: "Rose gold rings", top: "14%", left: "28%", size: "16%", duration: 8, floatY: 18, tilt: 16, delay: 1.8, z: 1, opacity: 0.4 },
+  { src: bangle2, alt: "Gold bangle", top: "88%", left: "22%", size: "24%", duration: 11, floatY: 12, tilt: -12, delay: 0.7, z: 2, opacity: 0.65 },
+  { src: bangle3, alt: "Gold bangle", top: "32%", left: "74%", size: "22%", duration: 9, floatY: 20, tilt: 20, rotate: -360, delay: 1.3, z: 2, opacity: 0.75 },
+  { src: ring1, alt: "Gold ring", top: "56%", left: "36%", size: "15%", duration: 7, floatY: 16, tilt: -14, delay: 2, z: 1, opacity: 0.3 },
+  { src: earring, alt: "Gold earring", top: "68%", left: "94%", size: "19%", duration: 8, floatY: 22, tilt: 8, delay: 0.2, z: 3 },
 ];
 
-export function HeroJewelry() {
+const jewelShadow =
+  "drop-shadow(0 22px 28px rgba(80,60,30,0.22)) drop-shadow(0 0 24px rgba(212,175,55,0.2))";
+
+export function HeroJewelryBackdrop() {
   return (
-    <div className="relative h-full w-full">
-      {/* soft ambient glow */}
-      <div
-        className="pointer-events-none absolute inset-[10%] rounded-full opacity-60 blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(212,175,55,0.18) 0%, transparent 70%)" }}
-      />
-
-      {/* center composition: logo above portrait */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <motion.img
-          src={logo}
-          alt="Zyra by Anna"
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 mb-[-6%] h-auto w-[42%] max-w-[220px] select-none"
-          draggable={false}
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.4, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-[62%] max-w-[360px]"
-          style={{ filter: "drop-shadow(0 30px 40px rgba(60,40,20,0.18))" }}
-        >
-          <motion.img
-            src={portrait}
-            alt="Anna, founder of Zyra"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            className="block h-auto w-full select-none"
-            draggable={false}
-          />
-        </motion.div>
-      </div>
-
-      {/* floating jewelry accents */}
-      {pieces.map((p, i) => (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {backdropPieces.map((p, i) => (
         <motion.div
           key={i}
           className="absolute"
@@ -83,17 +59,18 @@ export function HeroJewelry() {
             width: p.size,
             zIndex: p.z ?? 1,
             opacity: p.opacity ?? 1,
-            filter: "drop-shadow(0 18px 22px rgba(80,60,30,0.18)) drop-shadow(0 0 18px rgba(212,175,55,0.18))",
+            scale: p.scale ?? 1,
+            filter: jewelShadow,
           }}
-          initial={{ opacity: 0, y: 24, scale: 0.85 }}
+          initial={{ opacity: 0, y: 28, scale: (p.scale ?? 1) * 0.8 }}
           animate={{
             opacity: p.opacity ?? 1,
             y: [0, -p.floatY, 0],
-            scale: 1,
+            scale: p.scale ?? 1,
           }}
           transition={{
-            opacity: { duration: 1.2, delay: 0.5 + i * 0.12 },
-            scale: { duration: 1.2, delay: 0.5 + i * 0.12, ease: [0.22, 1, 0.36, 1] },
+            opacity: { duration: 1.2, delay: 0.4 + i * 0.06 },
+            scale: { duration: 1.2, delay: 0.4 + i * 0.06, ease: [0.22, 1, 0.36, 1] },
             y: {
               duration: p.duration,
               repeat: Infinity,
@@ -104,23 +81,67 @@ export function HeroJewelry() {
         >
           <motion.img
             src={p.src}
-            alt={p.alt}
+            alt=""
             loading="lazy"
             className="block h-auto w-full select-none"
             draggable={false}
             animate={
               p.rotate
-                ? { rotate: [0, p.rotate] }
+                ? { rotate: [p.tilt, p.tilt + p.rotate] }
                 : { rotate: [-p.tilt, p.tilt, -p.tilt] }
             }
             transition={
               p.rotate
-                ? { duration: p.duration * 4, repeat: Infinity, ease: "linear" }
-                : { duration: p.duration * 1.4, repeat: Infinity, ease: "easeInOut" }
+                ? { duration: p.duration * 5, repeat: Infinity, ease: "linear" }
+                : { duration: p.duration * 1.3, repeat: Infinity, ease: "easeInOut" }
             }
           />
         </motion.div>
       ))}
     </div>
+  );
+}
+
+export function HeroPortrait() {
+  return (
+    <div className="relative h-full w-full">
+      <div
+        className="pointer-events-none absolute inset-x-[-10%] bottom-0 top-[8%] rounded-full opacity-70 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 80%, rgba(212,175,55,0.22) 0%, rgba(230,190,160,0.12) 45%, transparent 72%)",
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-x-0 bottom-0 flex justify-center"
+      >
+        <motion.img
+          src={portrait}
+          alt="Anna, founder of Zyra"
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="block w-[min(52vw,680px)] max-w-none select-none md:w-[min(48vw,720px)] lg:w-[min(50vw,780px)]"
+          style={{
+            filter: "drop-shadow(0 40px 60px rgba(60,40,20,0.25))",
+            marginBottom: "-2%",
+          }}
+          draggable={false}
+        />
+      </motion.div>
+    </div>
+  );
+}
+
+/** @deprecated Use HeroJewelryBackdrop + HeroPortrait in Hero */
+export function HeroJewelry() {
+  return (
+    <>
+      <HeroJewelryBackdrop />
+      <HeroPortrait />
+    </>
   );
 }

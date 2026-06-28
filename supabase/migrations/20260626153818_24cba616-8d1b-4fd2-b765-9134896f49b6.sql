@@ -65,7 +65,10 @@ GRANT ALL ON public.products TO service_role;
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Anyone can view visible products" ON public.products
-  FOR SELECT TO anon, authenticated USING (hidden = false OR public.has_role(auth.uid(), 'admin'));
+  FOR SELECT TO anon USING (hidden = false);
+
+CREATE POLICY "Admins and authenticated users can view products" ON public.products
+  FOR SELECT TO authenticated USING (hidden = false OR public.has_role(auth.uid(), 'admin'));
 
 CREATE POLICY "Admins can insert products" ON public.products
   FOR INSERT TO authenticated WITH CHECK (public.has_role(auth.uid(), 'admin'));

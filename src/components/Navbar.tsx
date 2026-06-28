@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Instagram, Menu, X } from "lucide-react";
-import logo from "@/assets/zyra-logo.png";
 
 const links = [
   { label: "Home", href: "#home" },
   { label: "Products", href: "#products" },
-  { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -32,39 +30,28 @@ export function Navbar() {
           : "bg-transparent border-transparent"
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-        <a href="#home" aria-label="Zyra by Anna home" className="flex items-center">
-          <img
-            src={logo}
-            alt="Zyra by Anna"
-            className="h-10 w-auto md:h-12"
-            width={200}
-            height={80}
-          />
-        </a>
-
-        <ul className="hidden items-center gap-10 md:flex">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                className="gold-underline font-sans text-[12px] uppercase tracking-luxe text-ink hover:text-ink/80"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="hidden md:block">
+      <nav className="mx-auto flex max-w-7xl items-center justify-end px-6 py-4 md:px-10">
+        <div className="hidden items-center gap-6 md:flex">
+          <ul className="flex items-center gap-10">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  className="gold-underline font-sans text-[12px] uppercase tracking-luxe text-ink hover:text-ink/80"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
           <a
             href="https://instagram.com/zyra_by_anna"
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-gold/50 px-4 py-2 text-[11px] uppercase tracking-luxe text-ink transition-all hover:bg-gold/10 hover:shadow-glow"
+            className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-4 py-2 text-[11px] uppercase tracking-luxe text-ink transition-all hover:bg-gold/10"
           >
-            <Instagram className="h-3.5 w-3.5 text-gold" />
-            @zyra_by_anna
+            <Instagram className="h-4 w-4 text-gold" />
+            Instagram
           </a>
         </div>
 
@@ -98,15 +85,15 @@ export function Navbar() {
                   </a>
                 </li>
               ))}
-              <li className="pt-3">
+              <li>
                 <a
+                  onClick={() => setOpen(false)}
                   href="https://instagram.com/zyra_by_anna"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-gold/50 px-4 py-2 text-[11px] uppercase tracking-luxe text-ink"
+                  className="block py-3 text-[13px] uppercase tracking-luxe text-ink"
                 >
-                  <Instagram className="h-3.5 w-3.5 text-gold" />
-                  @zyra_by_anna
+                  Instagram
                 </a>
               </li>
             </ul>

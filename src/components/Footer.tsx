@@ -4,7 +4,6 @@ import logo from "@/assets/zyra-logo.png";
 const links = [
   { label: "Home", href: "#home" },
   { label: "Products", href: "#products" },
-  { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
 ];
 
