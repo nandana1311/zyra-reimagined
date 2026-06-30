@@ -69,6 +69,8 @@ export function Products() {
   const [active, setActive] = useState<Product | null>(null);
   const [filter, setFilter] = useState<string>("");
   const [displayCount, setDisplayCount] = useState(8);
+  const { add } = useCart();
+  const navigate = useNavigate();
 
   const { data: products = [], error, isLoading } = useQuery({
     queryKey: ["products", "public"],
