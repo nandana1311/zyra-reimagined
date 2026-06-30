@@ -56,7 +56,32 @@ export function Navbar() {
             <Instagram className="h-4 w-4 text-gold" />
             Instagram
           </a>
+          <Link
+            to="/cart"
+            aria-label="Cart"
+            className="relative inline-flex items-center justify-center rounded-full border border-gold/40 p-2.5 text-ink transition-all hover:bg-gold/10"
+          >
+            <ShoppingBag className="h-4 w-4 text-gold" />
+            {count > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-medium text-ink">
+                {count}
+              </span>
+            )}
+          </Link>
         </div>
+
+        <Link
+          to="/cart"
+          aria-label="Cart"
+          className="relative ml-auto mr-2 inline-flex items-center justify-center rounded-full border border-gold/40 p-2 text-ink md:hidden"
+        >
+          <ShoppingBag className="h-4 w-4 text-gold" />
+          {count > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-medium text-ink">
+              {count}
+            </span>
+          )}
+        </Link>
 
         <button
           aria-label="Toggle menu"
