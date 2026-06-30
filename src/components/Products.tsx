@@ -303,15 +303,57 @@ export function Products() {
                     </div>
                   </div>
                 )}
-                <a
-                  href={`https://wa.me/0000000000?text=Hi%2C%20I%27d%20like%20to%20buy%20the%20${encodeURIComponent(active.name)}%20for%20${encodeURIComponent(formatRupees(active.price_inr))}.%20Please%20share%20payment%20details.`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-gold px-6 py-3.5 text-[11px] uppercase tracking-luxe text-ink shadow-glow transition-transform hover:-translate-y-0.5"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Buy Now
-                </a>
+                <div className="mt-auto space-y-3">
+                  <div className="flex items-center justify-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-2 text-[11px] uppercase tracking-luxe text-ink">
+                    <Truck className="h-3.5 w-3.5 text-gold" />
+                    Free Shipping on Orders Above ₹499
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      disabled={active.inventory <= 0}
+                      onClick={() => {
+                        add({
+                          id: active.id,
+                          name: active.name,
+                          price_inr: active.price_inr,
+                          image_url: resolveProductImage(
+                            active.image_url,
+                            Math.max(visible.findIndex((p) => p.id === active.id), 0),
+                          ),
+                          category: active.category,
+                        });
+                        toast.success(`${active.name} added to cart`);
+                      }}
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-ink/20 bg-background px-5 py-3.5 text-[11px] uppercase tracking-luxe text-ink transition-all hover:border-gold hover:bg-gold/10 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <ShoppingBag className="h-4 w-4" />
+                      Add to Cart
+                    </button>
+                    <button
+                      type="button"
+                      disabled={active.inventory <= 0}
+                      onClick={() => {
+                        add({
+                          id: active.id,
+                          name: active.name,
+                          price_inr: active.price_inr,
+                          image_url: resolveProductImage(
+                            active.image_url,
+                            Math.max(visible.findIndex((p) => p.id === active.id), 0),
+                          ),
+                          category: active.category,
+                        });
+                        setActive(null);
+                        navigate({ to: "/cart" });
+                      }}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-gold px-5 py-3.5 text-[11px] uppercase tracking-luxe text-ink shadow-glow transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Buy Now
+                    </button>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </motion.div>
