@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { X, MessageCircle, Sparkles } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { X, MessageCircle, Sparkles, ShoppingBag, Truck } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useCart, WHATSAPP_NUMBER } from "@/lib/cart";
 import { formatRupees } from "@/lib/format";
 import bangle1 from "@/assets/floating-bangle-1.png";
 import bangle2 from "@/assets/floating-bangle-2.png";
