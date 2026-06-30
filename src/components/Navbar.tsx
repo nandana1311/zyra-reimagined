@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Menu, X } from "lucide-react";
+import { Instagram, Menu, X, ShoppingBag } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useCart } from "@/lib/cart";
 
 const links = [
-  { label: "Home", href: "#home" },
-  { label: "Products", href: "#products" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/#home" },
+  { label: "Products", href: "/#products" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export function Navbar() {
