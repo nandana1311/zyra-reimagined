@@ -277,11 +277,13 @@ export function Products() {
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className="flex flex-col gap-5 overflow-y-auto p-8 md:p-12">
-                <p className="text-[10px] uppercase tracking-luxe text-gold">{active.category}</p>
-                <h3 className="font-display text-3xl text-ink md:text-4xl">{active.name}</h3>
-                <p className="font-display text-2xl text-gradient-gold">{formatRupees(active.price_inr)}</p>
-                <div className="mt-auto space-y-3">
+              <div className="flex flex-col gap-4 overflow-y-auto p-8 md:p-12">
+                <div>
+                  <p className="text-[10px] uppercase tracking-luxe text-gold">{active.category}</p>
+                  <h3 className="mt-1 font-display text-3xl text-ink md:text-4xl">{active.name}</h3>
+                  <p className="mt-2 font-display text-2xl text-gradient-gold">{formatRupees(active.price_inr)}</p>
+                </div>
+                <div className="space-y-3">
                   <div className="flex items-center justify-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-2 text-[11px] uppercase tracking-luxe text-ink">
                     <Truck className="h-3.5 w-3.5 text-gold" />
                     Free Shipping on Orders Above ₹499
