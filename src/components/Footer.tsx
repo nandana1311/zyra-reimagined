@@ -21,10 +21,6 @@ export function Footer() {
             loading="lazy"
             className="h-16 w-auto brightness-0 invert-[0.85] sepia hue-rotate-[10deg] saturate-200"
           />
-          <p className="mt-6 max-w-xs text-sm leading-relaxed text-background/60">
-            Handcrafted fine jewelry, composed slowly — for the woman who wants
-            to feel quietly herself.
-          </p>
         </div>
 
         <div>

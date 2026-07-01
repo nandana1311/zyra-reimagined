@@ -281,28 +281,6 @@ export function Products() {
                 <p className="text-[10px] uppercase tracking-luxe text-gold">{active.category}</p>
                 <h3 className="font-display text-3xl text-ink md:text-4xl">{active.name}</h3>
                 <p className="font-display text-2xl text-gradient-gold">{formatRupees(active.price_inr)}</p>
-                <p className="text-[15px] leading-relaxed text-ink-soft">{active.description}</p>
-                {active.materials && (
-                  <div className="border-t border-border pt-5">
-                    <p className="text-[10px] uppercase tracking-luxe text-ink-soft">Materials</p>
-                    <p className="mt-2 text-sm text-ink">{active.materials}</p>
-                  </div>
-                )}
-                {active.colors.length > 0 && (
-                  <div>
-                    <p className="text-[10px] uppercase tracking-luxe text-ink-soft">Available in</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {active.colors.map((c) => (
-                        <span
-                          key={c}
-                          className="rounded-full border border-gold/40 px-3 py-1 text-[11px] uppercase tracking-luxe text-ink"
-                        >
-                          {c}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
                 <div className="mt-auto space-y-3">
                   <div className="flex items-center justify-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-2 text-[11px] uppercase tracking-luxe text-ink">
                     <Truck className="h-3.5 w-3.5 text-gold" />
