@@ -222,8 +222,22 @@ function AdminPage() {
           </div>
           {isLoading ? (
             <div className="p-12 text-center text-ink-soft">Loading catalog…</div>
+          ) : productsError ? (
+            <div className="p-12 text-center">
+              <p className="text-red-500">
+                {productsError instanceof Error ? productsError.message : "Failed to load products"}
+              </p>
+              <button
+                onClick={() => refetch()}
+                className="mt-4 rounded-full border border-gold/40 px-5 py-2 text-[11px] uppercase tracking-luxe text-gold hover:bg-gold/10"
+              >
+                Retry
+              </button>
+            </div>
           ) : filtered.length === 0 ? (
-            <div className="p-12 text-center text-ink-soft">No products.</div>
+            <div className="p-12 text-center text-ink-soft">
+              {search.trim() ? "No products match your search." : "No products yet. Click “New product” to add your first piece."}
+            </div>
           ) : (
             <ul>
               {filtered.map((p) => (
