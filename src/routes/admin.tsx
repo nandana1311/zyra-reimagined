@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Eye, EyeOff, Pencil, Plus, Trash2, LogOut, Save, X, Image as ImageIcon, Search,
+  Eye, EyeOff, Pencil, Plus, Trash2, LogOut, Save, X, Image as ImageIcon, Search, Upload, Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -437,20 +437,11 @@ function EditorModal({
               {form.hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </Field>
-          <Field label="Image URL" wide>
-            <input
-              className="lux-input"
+          <Field label="Product image" wide>
+            <ImageUploader
               value={form.image_url}
-              placeholder="https://… or /__l5e/assets-v1/…"
-              onChange={(e) => set("image_url", e.target.value)}
+              onChange={(url) => set("image_url", url)}
             />
-            {form.image_url && (
-              <img
-                src={form.image_url}
-                alt=""
-                className="mt-3 h-32 w-32 rounded-xl object-cover ring-1 ring-gold/20"
-              />
-            )}
           </Field>
           <Field label="Materials" wide>
             <input className="lux-input" value={form.materials} onChange={(e) => set("materials", e.target.value)} />
@@ -514,5 +505,100 @@ function Field({
       <span className="mb-2 block text-[10px] uppercase tracking-luxe text-ink-soft">{label}</span>
       {children}
     </label>
+  );
+}
+
+function ImageUploader({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+
+  async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5 MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("product-images")
+        .upload(path, file, { cacheControl: "31536000", upsert: false });
+      if (upErr) throw upErr;
+      // Private bucket → use long-lived signed URL (~10 years)
+      const { data, error: signErr } = await supabase.storage
+        .from("product-images")
+        .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+      if (signErr) throw signErr;
+      onChange(data.signedUrl);
+      toast.success("Image uploaded");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-5 py-2.5 text-[11px] uppercase tracking-luxe text-ink hover:bg-gold/10 disabled:opacity-50"
+        >
+          {uploading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Upload className="h-3.5 w-3.5" />
+          )}
+          {uploading ? "Uploading…" : value ? "Replace image" : "Upload image"}
+        </button>
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="text-[11px] uppercase tracking-luxe text-ink-soft hover:text-red-500"
+          >
+            Remove
+          </button>
+        )}
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleFile(f);
+          }}
+        />
+      </div>
+      <input
+        className="lux-input"
+        value={value}
+        placeholder="Or paste an image URL"
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {value && (
+        <img
+          src={value}
+          alt="Product preview"
+          className="h-40 w-40 rounded-xl object-cover ring-1 ring-gold/20"
+        />
+      )}
+    </div>
   );
 }
