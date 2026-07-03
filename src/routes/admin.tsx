@@ -81,7 +81,7 @@ function AdminPage() {
     };
   }, [navigate]);
 
-  const { data: products = [], isLoading, refetch } = useQuery({
+  const { data: products = [], isLoading, error: productsError, refetch } = useQuery({
     queryKey: ["products", "admin"],
     enabled: isAdmin === true,
     queryFn: async () => {
@@ -103,20 +103,28 @@ function AdminPage() {
   }, [products, search]);
 
   async function toggleHidden(p: Product) {
-    const { error } = await supabase.from("products").update({ hidden: !p.hidden }).eq("id", p.id);
-    if (error) return toast.error(error.message);
-    toast.success(p.hidden ? "Visible" : "Hidden");
-    refetch();
-    qc.invalidateQueries({ queryKey: ["products", "public"] });
+    try {
+      const { error } = await supabase.from("products").update({ hidden: !p.hidden }).eq("id", p.id);
+      if (error) throw error;
+      toast.success(p.hidden ? "Product is now visible" : "Product hidden");
+      refetch();
+      qc.invalidateQueries({ queryKey: ["products", "public"] });
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to update visibility");
+    }
   }
 
   async function remove(p: Product) {
     if (!confirm(`Delete "${p.name}"?`)) return;
-    const { error } = await supabase.from("products").delete().eq("id", p.id);
-    if (error) return toast.error(error.message);
-    toast.success("Deleted");
-    refetch();
-    qc.invalidateQueries({ queryKey: ["products", "public"] });
+    try {
+      const { error } = await supabase.from("products").delete().eq("id", p.id);
+      if (error) throw error;
+      toast.success("Product deleted");
+      refetch();
+      qc.invalidateQueries({ queryKey: ["products", "public"] });
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete product");
+    }
   }
 
   async function signOut() {
