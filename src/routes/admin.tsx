@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Eye, EyeOff, Pencil, Plus, Trash2, LogOut, Save, X, Image as ImageIcon, Search,
+  Eye, EyeOff, Pencil, Plus, Trash2, LogOut, Save, X, Image as ImageIcon, Search, Upload, Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
