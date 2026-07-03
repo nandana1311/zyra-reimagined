@@ -54,18 +54,27 @@ function AdminPage() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!mounted) return;
-      if (!data.user) {
-        navigate({ to: "/auth" });
-        return;
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (!mounted) return;
+        if (error) throw error;
+        if (!data.user) {
+          navigate({ to: "/auth" });
+          return;
+        }
+        setUserEmail(data.user.email ?? null);
+        const { data: roles, error: rolesError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id);
+        if (rolesError) throw rolesError;
+        setIsAdmin((roles ?? []).some((r) => r.role === "admin"));
+      } catch (err: unknown) {
+        if (!mounted) return;
+        const msg = err instanceof Error ? err.message : "Failed to verify access";
+        toast.error(msg);
+        setIsAdmin(false);
       }
-      setUserEmail(data.user.email ?? null);
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", data.user.id);
-      setIsAdmin((roles ?? []).some((r) => r.role === "admin"));
     })();
     return () => {
       mounted = false;
