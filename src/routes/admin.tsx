@@ -54,25 +54,34 @@ function AdminPage() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!mounted) return;
-      if (!data.user) {
-        navigate({ to: "/auth" });
-        return;
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (!mounted) return;
+        if (error) throw error;
+        if (!data.user) {
+          navigate({ to: "/auth" });
+          return;
+        }
+        setUserEmail(data.user.email ?? null);
+        const { data: roles, error: rolesError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id);
+        if (rolesError) throw rolesError;
+        setIsAdmin((roles ?? []).some((r) => r.role === "admin"));
+      } catch (err: unknown) {
+        if (!mounted) return;
+        const msg = err instanceof Error ? err.message : "Failed to verify access";
+        toast.error(msg);
+        setIsAdmin(false);
       }
-      setUserEmail(data.user.email ?? null);
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", data.user.id);
-      setIsAdmin((roles ?? []).some((r) => r.role === "admin"));
     })();
     return () => {
       mounted = false;
     };
   }, [navigate]);
 
-  const { data: products = [], isLoading, refetch } = useQuery({
+  const { data: products = [], isLoading, error: productsError, refetch } = useQuery({
     queryKey: ["products", "admin"],
     enabled: isAdmin === true,
     queryFn: async () => {
@@ -94,20 +103,28 @@ function AdminPage() {
   }, [products, search]);
 
   async function toggleHidden(p: Product) {
-    const { error } = await supabase.from("products").update({ hidden: !p.hidden }).eq("id", p.id);
-    if (error) return toast.error(error.message);
-    toast.success(p.hidden ? "Visible" : "Hidden");
-    refetch();
-    qc.invalidateQueries({ queryKey: ["products", "public"] });
+    try {
+      const { error } = await supabase.from("products").update({ hidden: !p.hidden }).eq("id", p.id);
+      if (error) throw error;
+      toast.success(p.hidden ? "Product is now visible" : "Product hidden");
+      refetch();
+      qc.invalidateQueries({ queryKey: ["products", "public"] });
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to update visibility");
+    }
   }
 
   async function remove(p: Product) {
     if (!confirm(`Delete "${p.name}"?`)) return;
-    const { error } = await supabase.from("products").delete().eq("id", p.id);
-    if (error) return toast.error(error.message);
-    toast.success("Deleted");
-    refetch();
-    qc.invalidateQueries({ queryKey: ["products", "public"] });
+    try {
+      const { error } = await supabase.from("products").delete().eq("id", p.id);
+      if (error) throw error;
+      toast.success("Product deleted");
+      refetch();
+      qc.invalidateQueries({ queryKey: ["products", "public"] });
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete product");
+    }
   }
 
   async function signOut() {
@@ -205,8 +222,22 @@ function AdminPage() {
           </div>
           {isLoading ? (
             <div className="p-12 text-center text-ink-soft">Loading catalog…</div>
+          ) : productsError ? (
+            <div className="p-12 text-center">
+              <p className="text-red-500">
+                {productsError instanceof Error ? productsError.message : "Failed to load products"}
+              </p>
+              <button
+                onClick={() => refetch()}
+                className="mt-4 rounded-full border border-gold/40 px-5 py-2 text-[11px] uppercase tracking-luxe text-gold hover:bg-gold/10"
+              >
+                Retry
+              </button>
+            </div>
           ) : filtered.length === 0 ? (
-            <div className="p-12 text-center text-ink-soft">No products.</div>
+            <div className="p-12 text-center text-ink-soft">
+              {search.trim() ? "No products match your search." : "No products yet. Click “New product” to add your first piece."}
+            </div>
           ) : (
             <ul>
               {filtered.map((p) => (
