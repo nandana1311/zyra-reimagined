@@ -437,20 +437,11 @@ function EditorModal({
               {form.hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </Field>
-          <Field label="Image URL" wide>
-            <input
-              className="lux-input"
+          <Field label="Product image" wide>
+            <ImageUploader
               value={form.image_url}
-              placeholder="https://… or /__l5e/assets-v1/…"
-              onChange={(e) => set("image_url", e.target.value)}
+              onChange={(url) => set("image_url", url)}
             />
-            {form.image_url && (
-              <img
-                src={form.image_url}
-                alt=""
-                className="mt-3 h-32 w-32 rounded-xl object-cover ring-1 ring-gold/20"
-              />
-            )}
           </Field>
           <Field label="Materials" wide>
             <input className="lux-input" value={form.materials} onChange={(e) => set("materials", e.target.value)} />
