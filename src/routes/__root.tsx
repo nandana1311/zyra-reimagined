@@ -93,6 +93,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Zyra by Anna — Elegance in Every Detail" },
+      { name: "description", content: "Handcrafted luxury fine jewelry — rings, necklaces, earrings. Composed slowly in a small atelier by Anna." },
+      { property: "og:description", content: "Handcrafted luxury fine jewelry — rings, necklaces, earrings. Composed slowly in a small atelier by Anna." },
+      { name: "twitter:description", content: "Handcrafted luxury fine jewelry — rings, necklaces, earrings. Composed slowly in a small atelier by Anna." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ebc15295-6cdb-407e-9586-b44995f63950/id-preview-2f0f78c2--6f74cb50-f53b-4b3d-8185-66ea101567ac.lovable.app-1783094524890.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ebc15295-6cdb-407e-9586-b44995f63950/id-preview-2f0f78c2--6f74cb50-f53b-4b3d-8185-66ea101567ac.lovable.app-1783094524890.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
